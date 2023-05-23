@@ -7,28 +7,42 @@ const Planets = (props) => {
     const {id} = useParams()
 
     const [planet, setPlanet] = useState(null)
+    const [loaded, setLoaded] = useState(false)
+    const [error, setError] = useState(false)
+
+
 
     useEffect(() => {
         axios.get(`https://swapi.dev/api/planets/${id}`)
             .then(response => {
                 console.log(response.data)
-                setPlanet(response.data)})
-            .catch(error => {
-                console.log(error)
-                setPlanet(null)
+                setPlanet(response.data)
+                setLoaded(true)
+                setError(false)
             })
-    }, [id])
+            .catch(err => {
+                console.log(err)
+                setPlanet(null)
+                setError(true)
+            })
+        }, [id])
 
     return (
-        <div className="row justify-content-center">
-            <div className="col-auto" id="displayResults">
-                {planet ? <h1>{planet.name}</h1> : <h1>Planet not found.</h1>}
-                {planet ? <p><span className="label">Climate: </span>{planet.climate}</p> : <img src={ DeathStar } alt="Alderaan exploding"/>}
-                {planet ? <p><span className="label">Terrain: </span>{planet.terrain}</p> : ''}
-                {planet ? <p><span className="label">Surface Water: </span>{planet.surface_water}%</p> : ''}
-                {planet ? <p><span className="label">Population: </span>{planet.population}</p> : ''}
-            </div>
-        </div>
+        <>
+            {!loaded && !error?
+                <p>Loading...</p>
+                :
+                <div className="row justify-content-center">
+                    <div className="col-auto" id="displayResults">
+                        {planet ? <h1>{planet.name}</h1> : <h1>Planet not found.</h1>}
+                        {planet ? <p><span className="label">Climate: </span>{planet.climate}</p> : <img src={ DeathStar } alt="Alderaan exploding"/>}
+                        {planet ? <p><span className="label">Terrain: </span>{planet.terrain}</p> : ''}
+                        {planet ? <p><span className="label">Surface Water: </span>{planet.surface_water}%</p> : ''}
+                        {planet ? <p><span className="label">Population: </span>{planet.population}</p> : ''}
+                    </div>
+                </div>
+            }
+        </>
     )
 }
 
